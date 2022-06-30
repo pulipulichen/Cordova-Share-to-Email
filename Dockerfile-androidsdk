@@ -1,0 +1,50 @@
+FROM androidsdk/android-30:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ----------------------------------------------------------------
+# Install Node.js and Cordova
+# https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04
+RUN cd /tmp
+RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh
+RUN bash nodesource_setup.sh
+
+RUN apt-get update
+RUN apt install nodejs -y
+
+RUN npm install -g cordova
+
+# -------------------------------
+
+RUN mkdir -p /app
+WORKDIR /app
+
+# ----------------------------------------------------------------
+# Gradle 
+# https://linuxize.com/post/how-to-install-gradle-on-ubuntu-18-04/
+
+
+RUN mkdir -p /opt/gradle
+WORKDIR /tmp
+RUN apt-get install wget unzip -y
+RUN wget https://services.gradle.org/distributions/gradle-7.4.2-bin.zip -P /tmp
+RUN unzip -d /opt/gradle /tmp/gradle-*.zip
+#RUN echo "export GRADLE_HOME=/opt/gradle/gradle-5.0" >> /etc/profile.d/gradle.sh
+#RUN echo "export PATH=${GRADLE_HOME}/bin:${PATH}" >> /etc/profile.d/gradle.sh
+#RUN chmod +x /etc/profile.d/gradle.sh
+
+# ENV GRADLE_HOME=/opt/gradle/gradle-7.4.2
+# ENV PATH="${GRADLE_HOME}/bin:${PATH}"
+
+# -------------------------------
+# https://docs.gradle.org/7.1.1/userguide/gradle_daemon.html#sec:inotify_instances_limit
+RUN echo 524288 | tee -a /etc/sysctl.conf
+RUN sysctl -p --system
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+COPY ./entrypoint.sh /
+
+# -------------------------------
+# 請放在最後
+WORKDIR /app
+

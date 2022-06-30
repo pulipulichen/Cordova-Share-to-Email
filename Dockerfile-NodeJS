@@ -1,0 +1,19 @@
+# FROM webratio/cordova:4.1.1
+FROM node:18.4.0-bullseye
+
+RUN npm install -g cordova
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 要安裝Cordova，需要安裝很多套件
+# 我們參考這個網頁，先把套件下載下來，再來一次安裝吧
+# https://evothings.com/doc/build/cordova-install-linux.html
+
+RUN apt-get update
+RUN apt-get install ia32-libs wget -y
+
+RUN mkdir -p /opt/java
+#RUN wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.deb
+COPY ./package/jdk-18-linux-x64.tar.gz /opt/java
+RUN tar xvzf jdk-18-linux-x64.tar.gz
+RUN rm *.tar.gz

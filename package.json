@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build-push": "./build-push.sh",
+    "build-bash": "docker-compose build && docker-compose run app bash",
+    "build-up": "docker-compose build && docker-compose up"
+  },
+  "dependencies": {
+  }
+}
